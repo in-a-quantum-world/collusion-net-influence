@@ -86,7 +86,7 @@
 <rect x="158.3" y="828.0" width="213.4" height="34.0" rx="17.0" ry="17.0" fill="white" stroke="#d9822b" stroke-width="1.5"/>
 <text x="265.0" y="850.8" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#a85f14" text-anchor="middle" opacity="1.0">points at Charlie + Delta</text>
 <text x="265.0" y="889.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="500" fill="#a85f14" text-anchor="middle" opacity="1.0">innocent pair: same public rule</text>
-<text x="265.0" y="909.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#666666" text-anchor="middle" opacity="1.0">flagged in 100% of games</text>
+<text x="265.0" y="909.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#666666" text-anchor="middle" opacity="1.0">ranked first in 96 to 100% of games</text>
 <rect x="571.4" y="828.0" width="207.1" height="34.0" rx="17.0" ry="17.0" fill="white" stroke="#2c6fac" stroke-width="1.5"/>
 <text x="675.0" y="850.8" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1d4f7c" text-anchor="middle" opacity="1.0">points at Alpha + Bravo</text>
 <text x="675.0" y="889.0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14" font-weight="500" fill="#1d4f7c" text-anchor="middle" opacity="1.0">true pair: dependence survives conditioning</text>

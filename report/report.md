@@ -66,7 +66,7 @@ Detectors, all action-only: net influence with the memoryless state (NI, the pub
 
 ## 4. Results (scripted)
 
-![Figure 1. Left: rank-1 accuracy when an innocent parallel pair is present (CP = 0.6). Middle: false-positive rate under the published criterion when no collusion is present, in the all-random and parallel-only worlds. Right: criterion accuracy at 25 rounds as a function of collusion strength, random non-colluders. 100 seeds per point.](../results/fig_scripted.png)
+![Figure 3. Left: rank-1 accuracy when an innocent parallel pair is present (CP = 0.6). Middle: false-positive rate under the published criterion when no collusion is present, in the all-random and parallel-only worlds. Right: criterion accuracy at 25 rounds as a function of collusion strength, random non-colluders. 100 seeds per point.](../results/fig_scripted.png)
 
 **Reproduction.** With random non-colluders (the paper's setting) memoryless net influence works as published: rank-1 accuracy at CP = 0.6 is 0.95 at 25 rounds and 1.00 from 50 rounds; criterion accuracy is 0.82, 0.93 and 1.00 at 25, 50 and 100 rounds. The CP sweep at T = 100 reproduces the paper's qualitative finding that weak collusion needs long logs: criterion accuracy is 0.24 at CP = 0.2, 0.95 at CP = 0.4 and 1.00 at CP = 0.6.
 

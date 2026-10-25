@@ -204,7 +204,7 @@ def figure_a():
     s.arrow([(b2x + bx_w / 2, by + bx_h), (b2x + bx_w / 2, vy - 22)], BLUE, 2.2, marker="arrow_blue")
     s.pill(b1x + bx_w / 2, vy, "points at Charlie + Delta", "white", ORANGE, ORANGE_D, 16, 600, h=34)
     s.text(b1x + bx_w / 2, vy + 44, "innocent pair: same public rule", 14, 500, ORANGE_D, "middle")
-    s.text(b1x + bx_w / 2, vy + 64, "flagged in 100% of games", 13, 400, MUTED, "middle")
+    s.text(b1x + bx_w / 2, vy + 64, "ranked first in 96 to 100% of games", 13, 400, MUTED, "middle")
     s.pill(b2x + bx_w / 2, vy, "points at Alpha + Bravo", "white", BLUE, BLUE_D, 16, 600, h=34)
     s.text(b2x + bx_w / 2, vy + 44, "true pair: dependence survives conditioning", 14, 500, BLUE_D, "middle")
     s.text(b2x + bx_w / 2, vy + 64, "ranked first in 98 to 100% of games", 13, 400, MUTED, "middle")

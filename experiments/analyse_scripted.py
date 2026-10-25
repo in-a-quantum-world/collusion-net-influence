@@ -74,39 +74,50 @@ def main():
     import matplotlib.ticker
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.2))
-    colors = {"NI/none": "#b2182b", "NI/prev_majority": "#2166ac", "NI+perm/none": "#ef8a62",
-              "NI+perm/prev_majority": "#67a9cf", "MI": "#999999", "agree": "#4dac26", "cramer": "#7b3294"}
+    from matplotlib.lines import Line2D
+    plt.rcParams.update({"font.family": ["Inter", "DejaVu Sans"], "font.size": 11, "axes.titlesize": 12,
+                         "axes.labelsize": 12, "xtick.labelsize": 11, "ytick.labelsize": 11,
+                         "legend.fontsize": 11, "axes.spines.top": False, "axes.spines.right": False})
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5.6))
+    # one colour per detector, shared across every panel
+    colors = {"NI/none": "#d9822b", "NI+perm/none": "#f2b77a",
+              "NI/prev_majority": "#2c6fac", "NI+perm/prev_majority": "#8ab4dc",
+              "MI": "#777777", "agree": "#444444", "cramer": "#aaaaaa"}
     styles = {"MI": ":", "agree": "--", "cramer": "-."}
+    markers = {"MI": "v", "agree": "D", "cramer": "x"}
+    lw = 2.0
     ax = axes[0]
     for d in DETS:
-        ax.plot(Ts, [summary[f"A|parallel|cp=0.6|T={T}"][f"{d}|top_true"] for T in Ts], marker="o",
-                color=colors[d], ls=styles.get(d, "-"), label=LABELS[d])
+        ax.plot(Ts, [summary[f"A|parallel|cp=0.6|T={T}"][f"{d}|top_true"] for T in Ts], marker=markers.get(d, "o"),
+                ms=7, lw=lw, color=colors[d], ls=styles.get(d, "-"), label=LABELS[d])
     ax.set_xscale("log"); ax.set_xticks(Ts); ax.set_xticklabels(Ts); ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-    ax.set_ylim(-0.03, 1.03); ax.set_xlabel("rounds T"); ax.set_ylabel("rank-1 accuracy of true pair")
-    ax.set_title("Colluding pair + innocent parallel pair (CP=0.6)")
-    ax.legend(fontsize=7, loc="lower right")
+    ax.set_ylim(-0.03, 1.03); ax.set_xlabel("rounds T"); ax.set_ylabel("rank-1 accuracy of the true pair")
+    ax.set_title("(a) Innocent parallel pair present, CP = 0.6")
+    ax.legend(loc="center right", frameon=False, handlelength=2.6)
     ax = axes[1]
     for d in NI_DETS:
-        ax.plot(Ts, [summary[f"A|parallel_only|cp=0.0|T={T}"][f"{d}|flag_any"] for T in Ts], marker="s",
+        ax.plot(Ts, [summary[f"A|parallel_only|cp=0.0|T={T}"][f"{d}|flag_any"] for T in Ts], marker="s", ms=7, lw=lw,
                 color=colors[d], label=LABELS[d] + " (parallel-only)")
-        ax.plot(Ts, [summary[f"A|null|cp=0.0|T={T}"][f"{d}|flag_any"] for T in Ts], marker="^", ls="--",
+        ax.plot(Ts, [summary[f"A|null|cp=0.0|T={T}"][f"{d}|flag_any"] for T in Ts], marker="^", ms=7, lw=lw, ls="--",
                 color=colors[d], label=LABELS[d] + " (all random)")
     ax.set_xscale("log"); ax.set_xticks(Ts); ax.set_xticklabels(Ts); ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-    ax.set_ylim(-0.03, 1.03); ax.set_xlabel("rounds T"); ax.set_ylabel("false-positive rate (criterion, alpha=0.05)")
-    ax.set_title("No collusion present")
-    ax.legend(fontsize=6, loc="center right")
+    ax.set_ylim(-0.03, 1.03); ax.set_xlabel("rounds T"); ax.set_ylabel("false-positive rate (alpha = 0.05)")
+    ax.set_title("(b) No collusion present")
+    # colour is given by the panel (a) legend; this legend only explains the two worlds
+    world_handles = [Line2D([], [], color="#444444", marker="s", ms=7, lw=lw, ls="-", label="parallel-only world"),
+                     Line2D([], [], color="#444444", marker="^", ms=7, lw=lw, ls="--", label="all-random world")]
+    ax.legend(handles=world_handles, loc="center right", frameon=False, handlelength=2.6)
     ax = axes[2]
     cps = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
     for d in NI_DETS:
-        ax.plot(cps, [summary[f"B|bonjour|cp={cp}|T=25"][f"{d}|flag_true"] for cp in cps], marker="o",
+        ax.plot(cps, [summary[f"B|bonjour|cp={cp}|T=25"][f"{d}|flag_true"] for cp in cps], marker="o", ms=7, lw=lw,
                 color=colors[d], label=LABELS[d])
-    ax.set_ylim(-0.03, 1.03); ax.set_xlabel("collusion probability CP"); ax.set_ylabel("criterion correct")
-    ax.set_title("T=25 rounds (LLM-pilot scale), random non-colluders")
-    ax.legend(fontsize=7, loc="upper left")
+    ax.set_ylim(-0.03, 1.03); ax.set_xlabel("collusion probability CP"); ax.set_ylabel("criterion correct (true pair, alone)")
+    ax.set_title("(c) T = 25, random non-colluders")
+    ax.legend(loc="upper left", frameon=False, handlelength=2.6)
     for ax in axes:
         ax.grid(alpha=0.3)
-    fig.tight_layout()
+    fig.tight_layout(w_pad=2.5)
     fig.savefig(OUT_FIG, dpi=160)
     print("\nfigure saved", OUT_FIG)
 
