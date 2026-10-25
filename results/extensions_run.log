@@ -1,0 +1,146 @@
+3000 games
+0/3000
+200/3000
+400/3000
+600/3000
+800/3000
+1000/3000
+1200/3000
+1400/3000
+1600/3000
+1800/3000
+2000/3000
+2200/3000
+2400/3000
+2600/3000
+2800/3000
+simulation done
+
+Ext 1  power (declared pair == true pair), condition=bonjour, CP=0.6, state=prev_majority
+T            fixed/NI|flag_true  fixed/NI+perm|flag_true          calib|flag_true           calib|top_true        calib|p_holm_true
+25                         0.72                     0.76                     0.38                     0.85                     0.23
+50                         0.88                     0.91                     0.87                     0.97                     0.05
+100                        0.99                     0.99                     1.00                     1.00                     0.03
+200                        1.00                     1.00                     1.00                     1.00                     0.03
+
+Ext 1  power (declared pair == true pair), condition=parallel, CP=0.6, state=prev_majority
+T            fixed/NI|flag_true  fixed/NI+perm|flag_true          calib|flag_true           calib|top_true        calib|p_holm_true
+25                         1.00                     0.96                     0.42                     0.98                     0.27
+50                         1.00                     1.00                     0.87                     1.00                     0.04
+100                        1.00                     1.00                     1.00                     1.00                     0.03
+200                        1.00                     1.00                     1.00                     1.00                     0.03
+
+Ext 1  false-positive rate (any pair declared), condition=null, state=prev_majority
+T            fixed/NI|flag_any  fixed/NI+perm|flag_any          calib|flag_any     calib|flag_innocent        calib|min_p_holm
+25                        0.53                    0.49                    0.03                    0.00                    0.66
+50                        0.24                    0.24                    0.03                    0.00                    0.69
+100                       0.08                    0.04                    0.04                    0.00                    0.63
+200                       0.01                    0.01                    0.06                    0.00                    0.63
+
+Ext 1  false-positive rate (any pair declared), condition=parallel_only, state=prev_majority
+T            fixed/NI|flag_any  fixed/NI+perm|flag_any          calib|flag_any     calib|flag_innocent        calib|min_p_holm
+25                        1.00                    0.33                    0.00                    0.00                    0.90
+50                        0.99                    0.21                    0.00                    0.00                    0.89
+100                       0.76                    0.06                    0.00                    0.00                    0.93
+200                       0.09                    0.00                    0.01                    0.00                    0.91
+
+Ext 2  rank-1 accuracy of true pair AB, condition=parallel_rich, CP=0.6
+T                     NI/none|top_true       NI/prev_majority|top_true        NI/prev_profile|top_true           NI+perm/none|top_true  NI+perm/prev_majority|top_true   NI+perm/prev_profile|top_true
+25                                0.01                            0.00                            1.00                            0.01                            0.00                            0.75
+50                                0.00                            0.00                            1.00                            0.00                            0.00                            0.97
+100                               0.00                            0.00                            1.00                            0.00                            0.00                            1.00
+200                               0.00                            0.00                            1.00                            0.00                            0.00                            1.00
+500                               0.00                            0.00                            1.00                            0.00                            0.00                            1.00
+
+Ext 2  innocent pair CD ranked first, condition=parallel_rich
+T                     NI/none|top_innocent       NI/prev_majority|top_innocent        NI/prev_profile|top_innocent           NI+perm/none|top_innocent  NI+perm/prev_majority|top_innocent   NI+perm/prev_profile|top_innocent
+25                                    0.99                                1.00                                0.00                                0.99                                1.00                                0.00
+50                                    1.00                                1.00                                0.00                                1.00                                1.00                                0.00
+100                                   1.00                                1.00                                0.00                                1.00                                1.00                                0.00
+200                                   1.00                                1.00                                0.00                                1.00                                1.00                                0.00
+500                                   1.00                                1.00                                0.00                                1.00                                1.00                                0.00
+
+Ext 2  criterion correct (alpha=0.05), condition=parallel_rich
+T                     NI/none|flag_true       NI/prev_majority|flag_true        NI/prev_profile|flag_true           NI+perm/none|flag_true  NI+perm/prev_majority|flag_true   NI+perm/prev_profile|flag_true
+25                                 0.00                             0.00                             1.00                             0.00                             0.00                             0.41
+50                                 0.00                             0.00                             1.00                             0.00                             0.00                             0.80
+100                                0.00                             0.00                             1.00                             0.00                             0.00                             0.98
+200                                0.00                             0.00                             1.00                             0.00                             0.00                             1.00
+500                                0.00                             0.00                             1.00                             0.00                             0.00                             1.00
+
+Ext 2  calibrated (Holm p<0.05 + argmax) correct, condition=parallel_rich
+T                calib/none|flag_true  calib/prev_majority|flag_true   calib/prev_profile|flag_true
+25                               0.01                           0.00                           0.03
+50                               0.00                           0.00                           0.36
+100                              0.00                           0.00                           0.93
+200                              0.00                           0.00                           1.00
+500                              0.00                           0.00                           1.00
+
+Ext 2  number of occupied states and mean gamma(C;D|S)
+T                         n_states/none           n_states/prev_majority            n_states/prev_profile           NI/none|gamma_innocent  NI/prev_majority|gamma_innocent   NI/prev_profile|gamma_innocent                         cd_agree
+25                                1.000                            4.000                           14.730                            0.982                            0.905                            0.000                            1.000
+50                                1.000                            4.000                           19.830                            1.034                            0.992                            0.000                            1.000
+100                               1.000                            4.000                           24.550                            1.062                            1.038                            0.000                            1.000
+200                               1.000                            4.000                           27.890                            1.077                            1.056                            0.000                            1.000
+500                               1.000                            4.000                           28.670                            1.089                            1.069                            0.000                            1.000
+
+Ext 2  false-positive rate (any pair flagged, alpha=0.05), condition=parallel_rich_only
+T                     NI/none|flag_any       NI/prev_majority|flag_any        NI/prev_profile|flag_any           NI+perm/none|flag_any  NI+perm/prev_majority|flag_any   NI+perm/prev_profile|flag_any
+25                                0.83                            0.65                            0.97                            0.86                            0.85                            0.03
+50                                0.90                            0.78                            1.00                            0.93                            0.90                            0.02
+100                               0.98                            0.86                            1.00                            0.98                            0.90                            0.06
+200                               1.00                            0.98                            1.00                            1.00                            0.99                            0.01
+500                               1.00                            1.00                            1.00                            1.00                            1.00                            0.00
+
+Ext 2  innocent pair CD flagged (alpha=0.05), condition=parallel_rich_only
+T                     NI/none|flag_innocent       NI/prev_majority|flag_innocent        NI/prev_profile|flag_innocent           NI+perm/none|flag_innocent  NI+perm/prev_majority|flag_innocent   NI+perm/prev_profile|flag_innocent
+25                                     0.83                                 0.65                                 0.00                                 0.86                                 0.85                                 0.00
+50                                     0.90                                 0.78                                 0.00                                 0.93                                 0.90                                 0.00
+100                                    0.98                                 0.86                                 0.00                                 0.98                                 0.90                                 0.00
+200                                    1.00                                 0.98                                 0.00                                 1.00                                 0.99                                 0.00
+500                                    1.00                                 1.00                                 0.00                                 1.00                                 1.00                                 0.00
+
+Ext 2  calibrated rule: any pair declared / innocent declared, condition=parallel_rich_only
+T                     calib/none|flag_any       calib/prev_majority|flag_any        calib/prev_profile|flag_any           calib/none|flag_innocent  calib/prev_majority|flag_innocent   calib/prev_profile|flag_innocent
+25                                   1.00                               1.00                               0.00                               1.00                               1.00                               0.00
+50                                   1.00                               1.00                               0.00                               1.00                               1.00                               0.00
+100                                  1.00                               1.00                               0.00                               1.00                               1.00                               0.00
+200                                  1.00                               1.00                               0.00                               1.00                               1.00                               0.00
+500                                  1.00                               1.00                               0.00                               1.00                               1.00                               0.00
+
+Ext 3  coalition of three (A,B,C), CP=0.6, state=none: true pairs in top 3 (of 3) and rank-1 any true pair
+T            NI/none|true_in_top3  NI+perm/none|true_in_top3       MI/none|true_in_top3       NI/none|top_any_true  NI+perm/none|top_any_true       MI/none|top_any_true     MI/none|top2_are_AB_AC
+50                           1.82                       1.80                       2.81                       1.00                       1.00                       1.00                       0.96
+100                          1.93                       1.92                       2.97                       0.98                       0.98                       1.00                       1.00
+200                          2.00                       2.00                       3.00                       0.99                       0.99                       1.00                       1.00
+500                          2.00                       2.00                       3.00                       1.00                       1.00                       1.00                       1.00
+
+Ext 3  state=none: Bonjour criterion returns None (total / because >1 pair crosses / because 0 cross) and correct
+T                  NI/none|flag_none       NI/none|flag_none_multi        NI/none|flag_none_zero             NI/none|flag_true        NI+perm/none|flag_none  NI+perm/none|flag_none_multi   NI+perm/none|flag_none_zero        NI+perm/none|flag_true
+50                              0.25                          0.02                          0.23                          0.75                          0.24                          0.02                          0.22                          0.76
+100                             0.32                          0.00                          0.32                          0.68                          0.32                          0.00                          0.32                          0.68
+200                             0.54                          0.00                          0.54                          0.45                          0.55                          0.00                          0.55                          0.44
+500                             0.68                          0.00                          0.68                          0.32                          0.68                          0.00                          0.68                          0.32
+
+Ext 3  coalition of three (A,B,C), CP=0.6, state=prev_majority: true pairs in top 3 (of 3) and rank-1 any true pair
+T            NI/prev_majority|true_in_top3  NI+perm/prev_majority|true_in_top3       MI/prev_majority|true_in_top3       NI/prev_majority|top_any_true  NI+perm/prev_majority|top_any_true       MI/prev_majority|top_any_true     MI/prev_majority|top2_are_AB_AC
+50                                    1.75                                1.71                                2.61                                0.98                                0.98                                1.00                                0.95
+100                                   1.91                                1.91                                2.88                                0.97                                0.96                                1.00                                1.00
+200                                   2.00                                2.00                                3.00                                0.97                                0.97                                1.00                                1.00
+500                                   2.00                                2.00                                3.00                                1.00                                1.00                                1.00                                1.00
+
+Ext 3  state=prev_majority: Bonjour criterion returns None (total / because >1 pair crosses / because 0 cross) and correct
+T                  NI/prev_majority|flag_none       NI/prev_majority|flag_none_multi        NI/prev_majority|flag_none_zero             NI/prev_majority|flag_true        NI+perm/prev_majority|flag_none  NI+perm/prev_majority|flag_none_multi   NI+perm/prev_majority|flag_none_zero        NI+perm/prev_majority|flag_true
+50                                       0.28                                   0.02                                   0.26                                   0.72                                   0.29                                   0.03                                   0.26                                   0.71
+100                                      0.40                                   0.01                                   0.39                                   0.60                                   0.40                                   0.01                                   0.39                                   0.60
+200                                      0.49                                   0.00                                   0.49                                   0.51                                   0.50                                   0.00                                   0.50                                   0.50
+500                                      0.68                                   0.00                                   0.68                                   0.32                                   0.67                                   0.00                                   0.67                                   0.33
+
+Ext 3  state=none: mean raw gamma and net scores (nats); gamma(B;C) raw vs conditional on A
+T        MI/none|gamma_01   MI/none|gamma_02   MI/none|gamma_12   gamma_BC_given_A   NI/none|score_01   NI/none|score_02   NI/none|score_12  MI/none|top_is_BC
+50                  0.392              0.367              0.163              0.102              0.025             -0.026             -0.279              0.000
+100                 0.362              0.342              0.140              0.066              0.020             -0.020             -0.258              0.000
+200                 0.356              0.340              0.135              0.036              0.017             -0.017             -0.244              0.000
+500                 0.342              0.336              0.124              0.014              0.006             -0.006             -0.237              0.000
+
+figure saved /home/claude/collusion-net-influence/experiments/../results/fig_extensions.png
