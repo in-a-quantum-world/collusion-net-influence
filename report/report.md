@@ -6,13 +6,13 @@ date: "AI Collusion Research Sprint, Apart Research, 25 October 2026. Track 1 (q
 
 ## Abstract
 
-Bonjour, Aggarwal and Bhargava (UAI 2022) proposed pairwise net influence, an information-theoretic statistic that identifies a colluding pair in a repeated game from action logs alone. No public implementation exists and the method has never been applied to language-model agents or compared against any baseline. We implement the statistic for N players, validate it on scripted four-player iterated Rock-Paper-Scissors with one seeded colluding pair, and make two additions. First, a within-state permutation null that removes the positive small-sample bias of plug-in mutual information, which at 25 rounds (the scale LLM experiments actually run at) is as large as the paper's detection threshold. Second, an "innocent parallel conduct" confound in the spirit of the antitrust plus-factor debate: two non-colluders who follow the same public rule and are therefore perfectly correlated without any agreement. Over 4,400 simulated games we find that the published memoryless statistic, raw mutual information, Cramer's V and same-action rate all rank the innocent pair first in 100% of games, while conditioning on the public state (the previous round's majority action) recovers the true pair in 98 to 100% of games at 25 to 500 rounds. Conditioning alone, however, inflates false positives to 100% at 25 rounds; the permutation correction reduces them to 25% at 25 rounds and 5% at 100 rounds with no loss of ranking power. We release the code and an LLM harness (four GPT-4.1-mini players, one secret team with a private channel that the detector never sees) and report a pilot in Section 5.
+What should count as evidence that two AI agents are colluding? Antitrust law holds that parallel conduct is not an agreement and demands plus factors. We test one plus factor at two evidence surfaces, action logs and model internals, and in each case measure how the naive reading mistakes something innocent for collusion. On actions, we implement pairwise net influence (Bonjour et al. 2022) for N players, add a within-state permutation null, and run the ground-truth evaluation the method has never had: 4,400 scripted four-player games over five horizons, six collusion strengths, four baselines and two public-state definitions, an innocent pair following the same public rule, a harder innocent pair keyed on a richer state, and a coalition of three. The published memoryless statistic and every unconditioned baseline rank the innocent pair first in 96 to 100 percent of games; conditioning on the public state recovers the true pair in 98 to 100 percent; the permutation null cuts the 25-round false-positive rate from 100 percent to 25 percent; and we report where the conditioned detector breaks. We then apply the calibrated detector to GPT-4.1-mini agents with a hidden private channel. On internals, we run the privileged-observer control that Rose et al. (2026) proposed but did not execute: with a Jacobian lens on gemma-4-12B-it we ask whether the workspace representation of a partner's coded proposal differs between a receiver that adopts it and one that understands it and refuses, across five matched conditions. Code, logs and notebooks are released.
 
 ## 1. Introduction
 
 The sprint asks what should count as evidence that agents are colluding when the evidence is a log of actions (question 2.3), and whether information-theoretic measures can identify colluding pairs among several agents (question 1.4). Both questions share a difficulty that antitrust law has faced for decades: competitors frequently act in parallel because they respond to the same public information, and parallel conduct alone is not an agreement. A detector that flags correlation flags every pair that shares a prior or a strategy. This matters for LLM agents in particular, because two instances of the same base model share a great deal of prior (Xu et al. 2026), so the base rate of innocent correlation is high.
 
-Bonjour et al. (2022) proposed a statistic that is attractive for exactly this reason. Rather than raw dependence, it measures the dependence between two agents' actions conditional on the observable game state, and then subtracts the strongest dependence any third agent has on the same target. It is domain independent and needs only logged actions. Yet it has only been tested on three scripted or Q-learning players, with no baseline comparison, no public code, and a fixed threshold whose behaviour at small sample sizes was not examined.
+Bonjour et al. (2022) proposed a statistic that is attractive for exactly this reason. Rather than raw dependence, it measures the dependence between two agents' actions conditional on the observable game state, and then subtracts the strongest dependence any third agent has on the same target. It is domain independent and needs only logged actions. Before this sprint it had been tested only on three scripted or Q-learning players, with no baseline comparison, no public code, and a fixed threshold whose behaviour at short horizons was not examined. Several concurrent sprint entries apply it directly to LLM players (Ayeku 2026; Snow 2026; Lee et al. 2026). What none of them provides, and what a detector needs before anyone relies on its verdicts, is a ground-truth characterisation: at which horizons, collusion strengths and kinds of innocent correlation does it hold, and where does it break. That is the first half of this report.
 
 This report does three things in a weekend-sized scope:
 
@@ -24,11 +24,11 @@ The scripted environment costs nothing to run and gives ground truth, which is w
 
 ## 2. Related work
 
-**Information-theoretic collusion detection.** Bonjour et al. (2022) define influence between agents as a conditional mutual information and detect collusion by a net-influence threshold (details in Section 3). Rose et al. (2026) detect collusion through model internals; our method is black box. Rippin et al. (2026) measure whether independent agents choose compatible steganographic schemes, a form of innocent-looking coordination that a state-conditioned statistic would need to handle. Xu et al. (2026) show that two deployments of the same base model have slight correlations in economic settings, which is the LLM analogue of our parallel-conduct confound.
+**Information-theoretic detection from actions.** Bonjour, Aggarwal and Bhargava (2022) define influence between agents as conditional mutual information given the game state and flag a pair whose net influence exceeds a fixed threshold. The method was validated on three scripted or Q-learning players with no baseline and no public code, and the threshold's behaviour at short horizons was not examined. Later information-theoretic detectors for language-model agents work on transcripts rather than actions: Tailor (2025) and Ghanem (2026) estimate cross-run mutual information over messages with honest-replay calibration, and neither conditions on a public state. We found no application of transfer entropy or directed information to LLM coordination. Xu et al. (2026) show that two deployments of one base model carry a small residual bid correlation and conclude that price-level audits are blind by construction; this is the LLM form of the parallel-conduct confound we test. Within the same sprint, Ayeku (2026) and Snow (2026) independently apply net influence with a permutation test to LLM players, and Ayeku also conditions on a public state against an innocent rule-following pair. Our scripted sweep (4,400 games, five horizons, six collusion strengths, four baselines, two state functions, with and without correction) is the systematic ground-truth evaluation that those concurrent LLM-first entries do not report.
 
-**Collusion in LLM agents.** Fish et al. (2024) and Lin et al. (2024) show LLM pricing agents sustaining supracompetitive prices without explicit messages; Agrawal et al. (2025) study double auctions with seller chat and oversight; Nakamura et al. (2026) measure coalition advantage in workplace tasks when a pair is given a private channel. Our LLM harness borrows the private-channel positive control from Nakamura et al. and the action-only evidence standard from the sprint's Track 2.
+**Detection from internals.** Rose et al. (2026) train a deception direction on residual activations and aggregate per-agent scores across a group, reaching 1.00 AUROC in-distribution and 0.73 to 0.93 zero-shot. They name, and leave to future work, a privileged-observer control in which an agent knows the scheme but does not take part. Li et al. (2026) find that a probe confined to the Jacobian-lens transport subspace detects stated stance but is no better than a random subspace at detecting withheld collusion. Veras Neves (2026) reads a coordination signal from the J-lens on single legal-judgement prompts in Qwen3.5-4B and gemma-4-e4b-it, with lexical-echo and answer-slot controls but no condition in which the model understands a proposal and declines it. Gurnee et al. (2026) and Ayonrinde and Lindsey (2026) show that a concept can sit in the workspace while the model suppresses it, which is the premise our refusal-matched assay tests.
 
-**Evidence standards.** Berger et al. (2025) survey how US antitrust treats parallel conduct: an agreement must be inferred from plus factors beyond parallelism. We operationalise one such factor, dependence that survives conditioning on the public information set, as a quantitative test.
+**Evidence standards.** Berger et al. (2025) survey plus factors beyond parallelism. We operationalise one: dependence that survives conditioning on the public information set and exceeds a permutation null.
 
 ## 3. Method
 
@@ -122,7 +122,7 @@ Future work: evaluate a p-value-based criterion with multiple-comparison control
 
 **What the result establishes.** On a scripted four-player game with known ground truth, state-conditioned, permutation-corrected net influence recovers a seeded colluding pair and ignores an innocent parallel pair, while the published statistic and naive baselines do not. The LLM pilot [is / is not, TO FILL] consistent with this at the single-game scale.
 
-**What it does not establish.** We tested one confound and one state function, both chosen to match. Real innocent correlation (shared base-model priors, common reactions to unmodelled shocks) is not reducible to a four-valued state. Our collusion model assumes ex-ante signalling, as in the original paper; LLM coalitions coordinate imperfectly. The fixed alpha is uncalibrated at 25 rounds in the all-random world. The LLM pilot is small (ten games per condition, one model, one temperature). All code was written in a single sprint day and has not been independently reviewed.
+**What it does not establish.** We tested one confound and one state function, both chosen to match. Real innocent correlation (shared base-model priors, common reactions to unmodelled shocks) is not reducible to a four-valued state. Our collusion model assumes ex-ante signalling, as in the original paper; LLM coalitions coordinate imperfectly. The fixed alpha is uncalibrated at 25 rounds in the all-random world. The LLM pilot is small (ten games per condition, one model, one temperature). All code was written in a single sprint day and has not been independently reviewed. Concurrent entries in the same sprint apply net influence with permutation tests to LLM players; our contribution on the action surface is the ground-truth characterisation, not the method. On the internals surface, Li et al. (2026) report that the J-lens subspace tracks what agents say rather than what they withhold; a null adopt-versus-refuse separation in our assay would be consistent with that, and a positive one would need reconciling with it.
 
 **Dual use.** A published detector tells a coalition what to avoid: here, any dependence between partners' actions beyond what the public state explains. Agents could evade it by routing coordination through the public state itself (both responding to a public signal they jointly control) or by coordinating at a rate below the detection floor we measured (CP around 0.2 at 25 rounds). We think this is acceptable because the same analysis tells a defender where the floor is and that single short games are not enough evidence; pooled logs are. No real market data, deployed system or private information was used.
 
@@ -130,21 +130,39 @@ Future work: evaluate a p-value-based criterion with multiple-comparison control
 
 Agrawal, K. et al. (2025). Evaluating LLM Agent Collusion in Double Auctions. arXiv:2507.01413.
 
+Ayeku, D. (2026). Telling Collusion from Common Knowledge: State-Conditioned Net Influence for LLM Agents. Apart Research AI Collusion Sprint entry (concurrent work).
+
+Ayonrinde, K. and Lindsey, J. (2026). J++ Lens: Jacobian Filtering Enables More Faithful Workspace Lenses. LessWrong, 8 October 2026.
+
 Berger, D. et al. (2025). Coordination by Code: Rethinking Antitrust Liability in the Age of AI Pricing. ABA Antitrust Magazine, Fall 2025.
 
 Bonjour, T., Aggarwal, V. and Bhargava, B. (2022). Information theoretic approach to detect collusion in multi-agent games. UAI 2022, PMLR 180:223-232.
 
 Fish, S., Gonczarowski, Y. A. and Shorrer, R. I. (2024). Algorithmic Collusion by Large Language Models. arXiv:2404.00806.
 
+Ghanem, M. C. (2026). Steganalysis of Adaptive Covert Collusion in Tool-Using Agent Populations. arXiv:2608.02698.
+
+Gurnee, W. et al. (2026). Verbalizable Representations Form a Global Workspace in Language Models. Transformer Circuits Thread, 6 July 2026.
+
+Lee, C. E., Rosdalen, F., Samodelkin, P. and Edin, Y. (2026). From Pairs To Coalitions: Extending Information-Theoretic Collusion Detection To Multi-Agent Games. Apart Research AI Collusion Sprint entry (concurrent work).
+
+Li, D., Varigonda, A., Feng, A., Chauhan, M. and Shrivastava, D. (2026). Collusion Does Not Localize to Jacobian-Lens Transport Subspaces. NeurIPS 2026 Workshop on Agents in the Wild (poster).
+
 Lin, R. et al. (2024). Strategic Collusion of LLM Agents: Market Division in Multi-Commodity Competitions. arXiv:2410.00031.
 
 Nakamura, M. et al. (2026). Colosseum: Auditing Collusion in Cooperative Multi-Agent Systems. arXiv:2602.15198.
 
-Rippin, M. et al. (2026). arXiv:2606.28425 (independent agents selecting compatible steganographic schemes; cited from the sprint brief).
+Rose, A., Cullen, C., Abdelnabi, S., Torr, P., Kaplowitz, B. G. and Schroeder de Witt, C. (2026). Detecting Multi-Agent Collusion Through Multi-Agent Interpretability. arXiv:2604.01151 (v4, HELIOS and NARCBench).
 
-Rose, A., Cullen, C., Kaplowitz, B. G. and Schroeder de Witt, C. (2026). Detecting Multi-Agent Collusion Through Multi-Agent Interpretability. arXiv:2604.01151.
+Snow, J. (2026). Reading Moves, Not Messages: Detecting Collusion Between LLM Agents. Apart Research AI Collusion Sprint entry (concurrent work).
 
-Xu, et al. (2026). arXiv:2607.26385 (correlation between deployments of the same base model in economic settings; cited from the sprint brief).
+solarkyle (2026). jspace-lenses: fitted Jacobian lenses for open models. Hugging Face.
+
+Tailor, O. (2025). Audit the Whisper: Detecting Steganographic Collusion in Multi-Agent LLMs. arXiv:2510.04303.
+
+Veras Neves, C. E. (2026). j-space: Jacobian Lens for algorithmic collusion. Hugging Face Space (Trackio logbook), July 2026.
+
+Xu, X., Wu, C., Lu, J., Tan, K., Tao, S. and Hong, H. (2026). Collusion with Competitive Marginals: Price-Level Audits Are Blind by Construction. arXiv:2607.26385.
 
 ## Appendix A. Reproducibility
 
