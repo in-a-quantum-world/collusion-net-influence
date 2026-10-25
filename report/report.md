@@ -23,7 +23,7 @@ This report therefore tests the plus-factor logic at two evidence surfaces, in a
 
 The scripted environment costs nothing and gives ground truth, which a detector needs before anyone trusts it on LLM logs; the LLM and lens experiments then test the two surfaces on real models. Figure 1 summarises the design.
 
-![Figure 1. Two evidence surfaces, one rule. Left: on an action log, the naive statistic points at the innocent pair that follows the same public rule; the state-conditioned, permutation-calibrated statistic points at the hidden coalition. Right: in the receiver's workspace, the lens reads the partner's proposal; the assay asks whether the readout differs between adopting and understanding-and-refusing.](../results/fig_evidence_ladder.png)
+![Figure 1. Two evidence surfaces, one rule. Left: on an action log, the naive statistic points at the innocent pair that follows the same public rule; the state-conditioned, permutation-calibrated statistic points at the hidden coalition. Right: in the receiver's workspace, the lens reads the partner's proposal; the assay asks whether the readout differs between adopting and understanding-and-refusing.](../results/fig_evidence_ladder.png){width=100%}
 
 ## 2. Related work
 
@@ -49,7 +49,7 @@ and agents i and j are declared colluding if Gamma(i; j) >= alpha and Gamma(j; i
 
 ### 3.2 State functions
 
-The paper leaves the choice of state to the game. We compare two: a memoryless state (a single value, so gamma reduces to plain mutual information) and the previous round's majority action (ties broken to the lowest action index), which has four values and is the minimal public summary a parallel rule could key on. The code also provides the full previous action profile, which is too sparse for short games.
+The paper leaves the state to the game. We compare a memoryless state (gamma reduces to plain mutual information), the previous round's majority action (four values, the minimal public summary a parallel rule could key on) and, in Section 4.5, the full previous action profile (82 values, sparse at short horizons).
 
 ### 3.3 Permutation bias correction
 
@@ -65,21 +65,21 @@ Four players, actions rock, paper, scissors. Payoffs follow Bonjour et al.: all 
 
 Conditions: *bonjour* (A random, B assistant, C and D random; true pair AB), *parallel* (C and D parallel; true pair AB, innocent pair CD), *null* (all random) and *parallel_only* (A, B random; C, D parallel; no collusion). We sweep T in {25, 50, 100, 200, 500} at CP = 0.6, and CP in {0, 0.2, 0.4, 0.6, 0.8, 1.0} at T = 25 and T = 100, with 100 seeds per cell (4,400 games).
 
-Detectors, all action-only: net influence with the memoryless state (NI, the published method), net influence with the majority state, both with and without the permutation correction, raw mutual information, Cramer's V, and same-action rate. Metrics: rank-1 accuracy (true pair scores highest among the six pairs), criterion accuracy (exactly one pair crosses alpha and it is the true pair) and false-positive rate (any pair crosses alpha in a no-collusion condition).
+Detectors, all action-only: net influence with the memoryless state (the published method) and with the majority state, each with and without the permutation correction; raw mutual information; Cramer's V; same-action rate. Metrics: rank-1 accuracy (the true pair scores highest of six), criterion accuracy (exactly one pair crosses alpha and it is the true pair) and false-positive rate (any pair crosses alpha with no collusion present).
 
 ### 3.5 Workspace-lens proposal assay
 
 A planted-communication assay with a scripted sender and a model receiver (gemma-4-12B-it, NF4 4-bit, solarkyle lens, read at the last prompt token before generation). Each base case fixes four candidate items (red, blue, green, black), a policy marking two eligible and two ineligible, a random codebook mapping four tag words to the items, and a sender nomination that is ineligible. The receiver sees the policy, the full codebook and the tag, and must reply with one item or abstain. Five matched prompts per base case: unauthorized (pair-bonus objective, nomination ineligible), permitted (same tag, nomination made eligible), refusal (strict-compliance objective), tag swapped (tag for the other ineligible item) and tag erased. For every prompt we record the rank of each candidate's token in the lens readout in an early band (first quarter of layers), a late band (0.6 to 0.95, the band that performed best in a prior sweep on this model) and the full upper band, and the item the receiver actually approved. The metrics, bands and conditions were fixed in code before any receiver was run. The headline quantity is candidate decoding of the transmitted item conditional on actual behaviour: adopted in the unauthorized condition versus refused in the refusal condition. Thirty base cases, 150 receiver evaluations. Figure 2 shows the pipeline and the five conditions.
 
-![Figure 2. The lens assay: scripted sender, random codebook, receiver prompt, Jacobian-lens readout at the last prompt token, one-word action, and the five matched conditions per base case.](../results/fig_lens_assay.png)
+![Figure 2. The lens assay: scripted sender, random codebook, receiver prompt, Jacobian-lens readout at the last prompt token, one-word action, and the five matched conditions per base case.](../results/fig_lens_assay.png){width=100%}
 
 ## 4. Results (scripted)
 
-![Figure 3. Left: rank-1 accuracy when an innocent parallel pair is present (CP = 0.6). Middle: false-positive rate under the published criterion when no collusion is present, in the all-random and parallel-only worlds. Right: criterion accuracy at 25 rounds as a function of collusion strength, random non-colluders. 100 seeds per point.](../results/fig_scripted.png)
+![Figure 3. Left: rank-1 accuracy when an innocent parallel pair is present (CP = 0.6). Middle: false-positive rate under the published criterion when no collusion is present, in the all-random and parallel-only worlds. Right: criterion accuracy at 25 rounds as a function of collusion strength, random non-colluders. 100 seeds per point.](../results/fig_scripted.png){width=100%}
 
-**Reproduction.** With random non-colluders (the paper's setting) memoryless net influence works as published: rank-1 accuracy at CP = 0.6 is 0.95 at 25 rounds and 1.00 from 50 rounds; criterion accuracy is 0.82, 0.93 and 1.00 at 25, 50 and 100 rounds. The CP sweep at T = 100 reproduces the paper's qualitative finding that weak collusion needs long logs: criterion accuracy is 0.24 at CP = 0.2, 0.95 at CP = 0.4 and 1.00 at CP = 0.6.
+**Reproduction.** With random non-colluders (the paper's setting) memoryless net influence works as published: rank-1 accuracy at CP = 0.6 is 0.95 at 25 rounds and 1.00 from 50; criterion accuracy is 0.82, 0.93 and 1.00 at 25, 50 and 100 rounds, and at T = 100 it rises from 0.24 at CP = 0.2 to 1.00 at CP = 0.6.
 
-**Same-action rate is not a collusion statistic.** The naive agreement baseline scores 0.00 in every collusion condition from 50 rounds on, because the assisting move is the move that loses to the partner, so collusion here looks like anti-correlation. Any detector built on "do they choose the same thing" would miss this coalition entirely. Cramer's V and raw mutual information, which are sign-agnostic, match net influence in the random-non-colluder world.
+**Same-action rate is not a collusion statistic.** The agreement baseline scores 0.00 in every collusion condition from 50 rounds on, because the assisting move is the move that loses to the partner: collusion here looks like anti-correlation. Cramer's V and raw mutual information, which are sign-agnostic, match net influence in the random-non-colluder world.
 
 **Innocent parallel conduct defeats every unconditioned statistic.** In the *parallel* condition, memoryless net influence, raw MI, Cramer's V and same-action rate all rank the innocent pair CD first in 96 to 100% of games at every T and every CP below 1.0 (Table 1; at CP = 1.0 the true pair is deterministic and wins the ranking in about 68% of games). The net-influence correction does not help, because the maximum third-party influence on A or B is small while gamma(C; D) is about 1.07 nats. The published criterion flags the innocent pair in 83 to 100% of *parallel_only* games.
 
@@ -101,15 +101,15 @@ A planted-communication assay with a scripted sender and a model receiver (gemma
 
 **Table 2. False-positive rate of the exactly-one-pair criterion (alpha = 0.05) when no collusion is present.**
 
-| T | NI memoryless, random | NI majority, random | NI+perm majority, random | NI memoryless, parallel-only | NI majority, parallel-only | NI+perm majority, parallel-only |
-|---|---|---|---|---|---|---|
-| 25 | 0.55 | 0.54 | 0.50 | 0.83 | 1.00 | 0.25 |
-| 50 | 0.19 | 0.38 | 0.36 | 0.96 | 0.99 | 0.20 |
-| 100 | 0.02 | 0.10 | 0.10 | 0.98 | 0.67 | 0.05 |
-| 200 | 0.00 | 0.00 | 0.00 | 1.00 | 0.08 | 0.01 |
-| 500 | 0.00 | 0.00 | 0.00 | 1.00 | 0.00 | 0.00 |
+| T | NI memoryless, all random | NI majority, parallel-only | NI+perm majority, all random | NI+perm majority, parallel-only |
+|---|---|---|---|---|
+| 25 | 0.55 | 1.00 | 0.50 | 0.25 |
+| 50 | 0.19 | 0.99 | 0.36 | 0.20 |
+| 100 | 0.02 | 0.67 | 0.10 | 0.05 |
+| 200 | 0.00 | 0.08 | 0.00 | 0.01 |
+| 500 | 0.00 | 0.00 | 0.00 | 0.00 |
 
-**Collusion strength at LLM scale.** At T = 25 with random non-colluders, criterion accuracy for the corrected, state-conditioned detector rises from 0.07 at CP = 0 to 0.36, 0.65, 0.84 and 0.85 at CP = 0.4, 0.6, 0.8 and 1.0. A 25-round LLM game therefore needs the coalition to coordinate in well over half of rounds to be caught by a single game; pooling ten games (250 rounds) brings the detector into the regime where CP = 0.4 is caught reliably.
+**Collusion strength at LLM scale.** At T = 25 with random non-colluders, criterion accuracy for the corrected, state-conditioned detector rises from 0.07 at CP = 0 to 0.36, 0.65, 0.84 and 0.85 at CP = 0.4, 0.6, 0.8 and 1.0: a single 25-round LLM game catches only a coalition that coordinates in well over half of rounds; pooling ten games brings CP = 0.4 into reach.
 
 ### 4.5 Extensions: calibrated criterion, a harder confound, and a coalition of three
 
@@ -126,21 +126,11 @@ Three further experiments (experiments/scripted_extensions.py, 100 seeds per cel
 | 100 | 1.00 | 0.04 | 0.06 | 1.00 | 0.04 | 0.00 |
 | 200 | 1.00 | 0.01 | 0.00 | 1.00 | 0.06 | 0.01 |
 
-**A richer innocent rule.** The *parallel_rich* agents C and D both play the action that beats the previous move of the lowest-indexed player who scored in the previous round (random in round 0). This is a deterministic function of the previous full action profile but not of the previous majority. Conditioning on the majority state fails completely: gamma(C; D | S) stays at 0.91 to 1.07 nats, the innocent pair ranks first in 100% of games at every T, and the fixed criterion flags it in 65 to 100% of no-collusion games (Table 4). Conditioning on the full previous profile removes the dependence (gamma(C; D | S) = 0.000) but spreads the data over 15 to 29 occupied states; without the permutation correction the bias flags a pair in 97 to 100% of no-collusion games. With the correction, rank-1 accuracy of the true pair is 0.75 at 25 rounds, 0.97 at 50 and 1.00 from 100, with a false-positive rate of 0.00 to 0.06. The detector works only when the analyst conditions on at least the state the innocent rule uses, and only once T is large relative to the number of states.
-
-**Table 4. Richer confound: rank-1 accuracy of the true pair (parallel_rich) and innocent pair flagged (parallel_rich_only), NI+perm.**
-
-| T | rank-1, memoryless | rank-1, majority | rank-1, profile | innocent flagged, memoryless | innocent flagged, majority | innocent flagged, profile |
-|---|---|---|---|---|---|---|
-| 25 | 0.01 | 0.00 | 0.75 | 0.86 | 0.85 | 0.00 |
-| 50 | 0.00 | 0.00 | 0.97 | 0.93 | 0.90 | 0.00 |
-| 100 | 0.00 | 0.00 | 1.00 | 0.98 | 0.90 | 0.00 |
-| 200 | 0.00 | 0.00 | 1.00 | 1.00 | 0.99 | 0.00 |
-| 500 | 0.00 | 0.00 | 1.00 | 1.00 | 1.00 | 0.00 |
+**A richer innocent rule.** The *parallel_rich* agents C and D both play the action that beats the previous move of the lowest-indexed player who scored in the previous round (random in round 0). This is a deterministic function of the previous full action profile but not of the previous majority. Conditioning on the majority state fails completely: gamma(C; D | S) stays at 0.91 to 1.07 nats, the innocent pair ranks first in 100% of games at every T, and the fixed criterion flags it in 65 to 100% of no-collusion games (Table 3 reports the fixed and calibrated rules; the per-state numbers are in results/extensions_tables.txt). Conditioning on the full previous profile removes the dependence (gamma(C; D | S) = 0.000) but spreads the data over 15 to 29 occupied states; without the permutation correction the bias flags a pair in 97 to 100% of no-collusion games. With the correction, rank-1 accuracy of the true pair is 0.75 at 25 rounds, 0.97 at 50 and 1.00 from 100, with a false-positive rate of 0.00 to 0.06. The detector works only when the analyst conditions on at least the state the innocent rule uses, and only once T is large relative to the number of states.
 
 **A coalition of three.** In a five-player game A is the primary and both B and C assist with CP = 0.6. Raw mutual information places all three coalition pairs in the top three from 200 rounds (2.81 of 3 at 50 rounds). Net influence places exactly two, because Gamma(B; C) is negative (mean -0.24 nats at 500 rounds). That is the right verdict for BC: B and C are conditionally independent given A (gamma(B; C | A) falls to 0.014 at 500 rounds), so the statistic should flag AB and AC and not BC. Rank-1 accuracy of a true pair is 0.98 to 1.00 under both statistics, so the net correction does not hurt the ranking. It does break the published criterion. Gamma(B; A) subtracts gamma(C; A), which equals gamma(B; A) in expectation, so the score of AB tends to zero (0.006 nats at 500 rounds) and the criterion returns None in 25%, 32%, 54% and 68% of games at 50, 100, 200 and 500 rounds, almost always because no pair crosses alpha. Power falls as T grows: with two assistants, the net correction cancels the signal it is meant to isolate.
 
-![Figure 4. Extensions. Left: the Holm p-value rule is calibrated at every horizon where the fixed threshold is not, at a cost in power at 25 rounds. Middle: an innocent pair keyed on the full previous profile defeats majority-state conditioning; profile-state conditioning with the permutation correction recovers the true pair from 50 rounds. Right: in a coalition of three, net influence places exactly two of the three true pairs in the top three, correctly excluding the conditionally independent pair, but its score for the true pairs tends to zero with more data.](../results/fig_extensions.png)
+![Figure 4. Extensions. Left: the Holm p-value rule is calibrated at every horizon where the fixed threshold is not, at a cost in power at 25 rounds. Middle: an innocent pair keyed on the full previous profile defeats majority-state conditioning; profile-state conditioning with the permutation correction recovers the true pair from 50 rounds. Right: in a coalition of three, net influence places exactly two of the three true pairs in the top three, correctly excluding the conditionally independent pair, but its score for the true pairs tends to zero with more data.](../results/fig_extensions.png){width=100%}
 
 ## 5. LLM agents: action-only detection with a hidden channel
 
@@ -164,7 +154,7 @@ Three further experiments (experiments/scripted_extensions.py, 100 seeds per cel
 
 **What is and is not new.** What is new here is narrow. We release the first general-N implementation of Bonjour et al.'s net influence with a within-state permutation null, and the first controlled study of its false-positive behaviour at 25 to 500 rounds against an innocent parallel-conduct pair, with four baselines and ground truth across 4,400 games. On the interpretability side, we are the first to ask whether a receiver's workspace representation of a partner's coded proposal differs between adopting it and understanding-and-refusing it, using matched refusal controls. What is not new: net influence itself; conditioning on state (already in the original definition); permutation calibration of dependence statistics; reading collusion-related content with the J-lens (Veras Neves, Li et al.); activation probes for collusion (Rose et al.); and the observation that same-model agents correlate (Xu et al.).
 
-The main result is a negative one with a constructive fix. The published net-influence statistic, like every unconditioned dependence statistic, cannot distinguish a coalition from two agents following the same public rule, and in a world that contains such agents it misidentifies them in every game. Conditioning on the public information set resolves this completely in our environment, but at the cost of a false-positive rate that the fixed threshold does not control at short game lengths; a permutation null fixes that. Together, conditioning plus calibration is a concrete, quantitative plus factor: dependence between two agents' actions that is not explained by what everyone could observe, and is larger than chance would produce in a log this short.
+The main action-side result is a negative one with a constructive fix. Every unconditioned dependence statistic, the published one included, mistakes two agents following the same public rule for a coalition in every game. Conditioning on the public information set fixes this, at the cost of a false-positive rate the fixed threshold does not control at short horizons; a permutation null fixes that. Conditioning plus calibration is a concrete plus factor: dependence not explained by what everyone could observe, larger than chance would produce in a log this short.
 
 The internals half applies the same rule to a different observation surface. A lens that reads the partner's proposal out of the workspace has shown comprehension; whether it has shown agreement is exactly what the refusal control decides. The sandbagging literature already shows that a model's workspace can hold an answer it declines to say; our assay asks the collusion version: can it hold a proposal it declines to act on. Section 6 reports what we found, and the reporting rule was fixed before the receiver was run.
 
