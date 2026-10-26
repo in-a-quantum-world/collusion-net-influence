@@ -3,17 +3,17 @@
 **Project title**
 When Net Influence Misleads: Calibration, Innocent Dependence, and Coalition Size
 
-**Project summary** (230 words)
+**Project summary** (274 words)
 
-When does statistical dependence constitute evidence of agent collusion? We stress-test pairwise net influence using 7,400 scripted games and two GPT-4.1-mini pilot runs, each comprising ten games in each of three conditions.
+When does statistical dependence between two agents count as evidence that they are colluding? We stress-test pairwise net influence (Bonjour et al. 2022), a detector that works from action logs alone, on 7,400 scripted games with a planted colluding pair and on two runs of GPT-4.1-mini agents, each ten games in three conditions.
 
-We examine public-state specification, finite-sample calibration, and coalition size. Innocent agents following the same public rule defeat unconditioned dependence statistics; conditioning removes this confound only when the chosen state captures that rule. At 25 rounds, a fixed threshold produces false accusations in approximately half of all-random games. A Holm-corrected permutation rule reduces false-positive rates on the tested scripted nulls, but flags a pair in each pooled LLM control without a planted coalition. These outcomes distinguish statistical rejection from evidence of collusion.
+We vary the public state the detector conditions on, the length of the game, and the size of the coalition. Two innocent agents that follow the same public rule defeat every unconditioned dependence statistic. Conditioning removes the problem only when the chosen state captures the rule they follow. At 25 rounds a fixed threshold accuses a pair in about half of all-random games. A Holm-corrected permutation rule holds the false-positive rate down on the scripted nulls, but flags a pair in each pooled LLM control that has no planted coalition. A rejected null is not the same as evidence of collusion.
 
-For a symmetric coalition with one primary and two assistants, we derive a cancellation mechanism: the pairwise correction subtracts one coalition member's influence from another's. Consequently, fixed-threshold detection deteriorates as sample size increases.
+With one primary agent and two assistants we derive a cancellation: the pairwise correction subtracts one coalition member's influence from another's, so fixed-threshold detection gets worse as the log grows.
 
-In the LLM pilots, the planted pair ranks first in eight or nine of ten games but is correctly flagged in five or seven. Its mean within-game score advantage changes from -0.25 to +1.00 across runs; these descriptive differences do not establish a causal benefit from coordination.
+In the LLM pilots the planted pair ranks first in eight or nine of ten games but is flagged in five or seven. Its mean score advantage was -0.25 in one run and +1.00 in the other, which does not show that the coordination paid off.
 
-An exploratory Jacobian-lens assay includes 150 receiver evaluations but no unauthorized adoption, leaving its intended participation-versus-refusal contrast unresolved. We release code and evaluation artifacts and identify assumptions auditors must check before treating dependence as evidence of collusion.
+An exploratory Jacobian-lens experiment ran 150 receiver evaluations but produced no unauthorised adoption, so its intended contrast between taking part and refusing is unresolved. We release the code and logs and list the assumptions an auditor has to check before treating dependence as evidence.
 
 **Tracks to tick**
 - Track 1: Markets and Collusion
