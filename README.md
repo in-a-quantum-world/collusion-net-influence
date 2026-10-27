@@ -1,8 +1,7 @@
 # Calibrated net influence: action-only collusion detection for LLM agents
 
-Apart Research AI Collusion Sprint, Oct 2026. Track 1, question 1.4 (also relevant to 2.3).
+Apart Research AI Collusion Sprint, Oct 2026
 
-All code written during the sprint (25 Oct 2026). No pre-existing code.
 
 ## Layout
 - `netinfluence/stats.py` : pairwise net influence (Bonjour et al. 2022), permutation bias correction, baselines
