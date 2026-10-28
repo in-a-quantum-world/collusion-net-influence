@@ -1,6 +1,6 @@
 # Next steps (adopted 26 Oct 2026)
 
-Source: docs/review-3-plan-and-timeline.md (external review, adopted as the project timeline).
+Adopted from an external review of the submission on 26 October 2026.
 
 ## Immediately after the sprint
 - Upload run 2's `llm_games.jsonl` to `results/20261026-1106-llm-pilot-run2/`.
@@ -20,7 +20,7 @@ Does coalition cancellation remain a practical detection failure once the detect
 Main: stress test separating calibration failures, state-specification failures and coalition-size failures. Supporting: LLM pilot as a transfer check. Exploratory appendix: lens assay with its absent positive arm. Add a short "What should an auditor do?" box.
 
 ## Follow-up study (funding proposal)
-"From Suspicious Dependence to Causal Evidence of Unauthorized Coordination": can an auditor identify when a partner's message causes an unauthorized action, without accusing legitimate cooperation, and do internal readouts add anything beyond an equally informed text monitor? See docs/review-3-plan-and-timeline.md sections 4 to 8 for the design, the six-week milestone plan and the staged compute request.
+"From Suspicious Dependence to Causal Evidence of Unauthorized Coordination": can an auditor identify when a partner's message causes an unauthorized action, without accusing legitimate cooperation, and do internal readouts add anything beyond an equally informed text monitor? Design in brief: an approval, allocation or verification task with explicit authorization; three behaviourally verified case types (unauthorized coordination carried out, legitimate cooperation, proposal actually rejected); message interventions (original, substituted, removed, sham); separate endpoints (decision, coordinated action, violations, benefit or harm, damage to legitimate cooperation); behavioural, text and internal monitors compared at equal information access; causal patching only if the readouts reproduce. Compute requested in stages tied to the gates below, starting with reproducibility and statistical review and a small pilot on one instrumented open model.
 
 | Week | Work | Gate |
 |---|---|---|
